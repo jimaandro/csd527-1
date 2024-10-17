@@ -4,43 +4,37 @@
 
 #define NUM_THREADS 5
 
-Sem_T sem;  // Define the semaphore
+Sem_T sem;  
 
 void *thread_func(void *arg) {
     int id = *(int *)arg;
     
-    Sem_wait(&sem);  // Wait for the semaphore
+    Sem_wait(&sem);  
 
-    // Critical section (simulating access to a shared resource)
     printf("Thread %d entering critical section.\n", id);
     
-    // Simulate some work by the thread
     for (volatile int i = 0; i < 1000000; ++i);
 
     printf("Thread %d exiting critical section.\n", id);
 
-    Sem_signal(&sem);  // Signal the semaphore
+    Sem_signal(&sem);  
 
     return NULL;
 }
 
 int main(void) {
-    Thread_init();  // Initialize thread system
-
-    // Initialize the semaphore with a count of 1 (binary semaphore)
+    Thread_init(); 
     Sem_init(&sem, 1);
 
     int thread_ids[NUM_THREADS];
-    
-    // Create and start threads
+   
     for (int i = 0; i < NUM_THREADS; ++i) {
-        thread_ids[i] = i + 1;  // Assign thread ID
-        Thread_new(thread_func, &thread_ids[i], sizeof(int));  // Create new thread
+        thread_ids[i] = i + 1;  
+        Thread_new(thread_func, &thread_ids[i], sizeof(int));  
     }
 
-    // Wait for all threads to finish
     Thread_join(0);
-    // Thread_join(5);  // Wait for all threads
+    // Thread_join(5);  
 
     return 0;
 }

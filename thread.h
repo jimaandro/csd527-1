@@ -5,18 +5,18 @@
 #include <stddef.h>
 
 typedef struct Thread_T {
-    int id;                    // Thread ID
-    void *stack;               // Stack pointer
-    int (*func)(void *);       // Function to be executed by the thread
-    void *args;                // Arguments passed to the function
-    int return_value;          // Return value after thread execution
-    struct Thread_T *next;     // Pointer to the next thread (for linked list)
+    int id;                    
+    void *stack;               
+    int (*func)(void *);       
+    void *args;                
+    int return_value;          
+    struct Thread_T *next;     
 } Thread_T;
 
-static Thread_T *current_thread = NULL;     // Pointer to currently running thread 
+static Thread_T *current_thread = NULL;     
 
 
-static Thread_T *ready_queue = NULL;        // Queue of threads ready to run
+static Thread_T *ready_queue = NULL;        
 
 extern void Thread_init(void);
 extern int Thread_new(int func(void *), void *args, size_t nbytes, ...);

@@ -132,15 +132,19 @@ int Thread_self(void) {
 
 // Wait for the specified thread to finish
 int Thread_join(int tid) {
+    //  printf("Thread %d exiting critical section.\n", tid);
     Thread_T *target = thread_pool[tid];
+
     assert(target);
+
+
     // print_thread_queue(&ready_queue);
 // printf("Thread started with return value %d id %d\n", target->return_value, target->id);
 bool state = (target->id<MAX_THREADS+1 && target->id >=0 ) ? thread_state_pool[target->id]==1 : false;
-    while ( state && target->stack) {
-        printf("Thread started with state value %b id %d\n", state, target->id);
+    if ( target) {
+        // printf("Thread started with state value %b id %d\n", state, target->id);
         Thread_pause();
-        printf("Thread started with state value %b id %d\n", state, target->id);
+        // printf("Thread started with state value %b id %d\n", state, target->id);
         state = (target->id<MAX_THREADS+1 && target->id >=0 ) ? thread_state_pool[target->id]==1 : false;
     }
     // printf("Thread started with return value %d id %d\n", target->return_value, target->id);

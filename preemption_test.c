@@ -69,6 +69,6 @@ int main(void) {
         Sem_signal(&semaphore);
     }
 
-    Thread_join(0);  // Wait for all threads to finish
+    Thread_join(2);  // Wait for all threads to finish
     return 0;
 }

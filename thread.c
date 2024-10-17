@@ -9,8 +9,9 @@
 
 static Thread_T *thread_pool[MAX_THREADS];  // Array to hold all created threads
 int thread_state_pool[MAX_THREADS];
-// static Thread_T *previous_thread = NULL;     // Pointer to currently running thread previous_thread
+static Thread_T *previous_thread = NULL;     // Pointer to currently running thread previous_thread
 static int num_threads = 0;
+
 
 // External assembly context switch function
 extern void _swtch(void *from, void *to);
@@ -52,15 +53,6 @@ void Thread_init(void) {
     current_thread->args = NULL;
     current_thread->return_value = 0;
     current_thread->next = NULL;
-
-    // previous_thread = malloc(sizeof(Thread_T));
-    // assert(previous_thread);
-    // previous_thread->id = 0;
-    // previous_thread->stack = NULL;
-    // previous_thread->func = NULL;
-    // previous_thread->args = NULL;
-    // previous_thread->return_value = 0;
-    // previous_thread->next = NULL;
 
     thread_pool[current_thread->id] = current_thread;
     thread_state_pool[current_thread->id] = 0; // this is the running thread (not free) 
@@ -104,26 +96,31 @@ void Thread_exit(int code) {
     current_thread->return_value = code;
 
     // printf("current_thread return_value: %d\n", current_thread->return_value);
-Thread_T *previous_thread = current_thread;
+
 
     if (previous_thread) {
         // free(previous_thread->stack);  // Free allocated stack space
         // printf("current_thread free\n");
         free(previous_thread);
     }
-    previous_thread = current_thread;
+    if (current_thread->id!=0)
+    {
+        previous_thread = current_thread;
+    }
+    thread_state_pool[current_thread->id] = 0;
+
 
     // Switch to the next available thread
     current_thread = dequeue(&ready_queue);
     // printf(" exit\n");
     if (current_thread) {
         // printf("current_thread switch\n");
-        thread_state_pool[current_thread->id] = 0;
+        
         _swtch(&previous_thread->stack, &current_thread->stack);  // Switch to the next thread
         
     } else {
         printf("current_thread exit\n");
-        thread_state_pool[current_thread->id] = 0;
+        // thread_state_pool[current_thread->id] = 0;
         exit(0);  // No more threads to run, exit the process
     }
 }
@@ -181,7 +178,7 @@ void enqueue(Thread_T **queue, Thread_T *t) {
     } else {
         Thread_T *temp = *queue;
         while (temp->next) {
-            temp = temp->next;
+            temp = temp->next;  // find the end of the queue
         }
         temp->next = t;
     }

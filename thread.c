@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
 #include "thread.h"
 
 #define MAX_THREADS 1024
@@ -21,10 +22,10 @@ extern void _thrstart();
 static void thread_stub(void);
 
 
-void thread_start(int (*func)(void *), void *args) {
-    func(args);      // Call the thread function
-    Thread_exit(0);  // Exit the thread when done
-}
+// void thread_start(int (*func)(void *), void *args) {
+//     func(args);      // Call the thread function
+//     Thread_exit(0);  // Exit the thread when done
+// }
 
 // Function to print the thread queue
 void print_thread_queue(Thread_T **queue) {
@@ -138,11 +139,12 @@ int Thread_join(int tid) {
     assert(target);
     // print_thread_queue(&ready_queue);
 // printf("Thread started with return value %d id %d\n", target->return_value, target->id);
-int state = target->id<MAX_THREADS+1 ? thread_state_pool[target->id]==1 : 0;
+bool state = (target->id<MAX_THREADS+1 && target->id >=0 ) ? thread_state_pool[target->id]==1 : false;
     while ( state && target->stack) {
+        printf("Thread started with state value %b id %d\n", state, target->id);
         Thread_pause();
-        state = target->id<MAX_THREADS+1 ? thread_state_pool[target->id]==1 : 0;
-        printf("Thread started with return value %d id %d\n", target->return_value);
+        printf("Thread started with state value %b id %d\n", state, target->id);
+        state = (target->id<MAX_THREADS+1 && target->id >=0 ) ? thread_state_pool[target->id]==1 : false;
     }
     // printf("Thread started with return value %d id %d\n", target->return_value, target->id);
     return target->return_value;

@@ -39,7 +39,7 @@ int main(void) {
     }
 
     // Wait for all threads to finish
-    Thread_join(1);
+    Thread_join(0);
     // Thread_join(5);  // Wait for all threads
 
     return 0;

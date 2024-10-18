@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "chan.h": "c",
+        "thread.h": "c",
+        "sem.h": "c"
+    }
+}

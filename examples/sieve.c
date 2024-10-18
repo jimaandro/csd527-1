@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "chan.h"
-#include "thread.h"
+#include "../chan.h"
+#include "../thread.h"
 
 struct args { unsigned n; Chan_T c; };
 

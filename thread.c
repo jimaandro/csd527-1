@@ -76,7 +76,7 @@ int Thread_new(int func(void *), void *args, size_t nbytes, ...) {
     // // Reserve space for the general-purpose registers that will be saved by _swtch
     
     *(--stack) = (void *)_thrstart; //16
-    *(--stack) = 3;  // Space for %ebp (saved by _swtch)    12
+    *(--stack) = 0;  // Space for %ebp (saved by _swtch)    12
     *(--stack) = (void *)args;  // Space for %edi (saved by _swtch)    8
     *(--stack) = (void *)func;  // Space for %esi (saved by _swtch)    4
     *(--stack) = 0;  // Space for %ebx (saved by _swtch)    0
@@ -103,15 +103,14 @@ void Thread_exit(int code) {
         // printf("current_thread free\n");
         free(previous_thread);
     }
-    if (current_thread->id!=0)
+    if (current_thread->id!=0)  // if not the thread 0 (root thread)
     {
         previous_thread = current_thread;
-    }
-    thread_state_pool[current_thread->id] = 0;
-
-
+            thread_state_pool[current_thread->id] = 0;
     // Switch to the next available thread
     current_thread = dequeue(&ready_queue);
+    }
+
     // printf(" exit\n");
     if (current_thread) {
         // printf("current_thread switch\n");
@@ -121,7 +120,7 @@ void Thread_exit(int code) {
     } else {
         printf("current_thread exit\n");
         // thread_state_pool[current_thread->id] = 0;
-        exit(0);  // No more threads to run, exit the process
+        exit(code);  // No more threads to run, exit the process
     }
 }
 

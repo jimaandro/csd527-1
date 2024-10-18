@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "chan.h"
-#include "thread.h"
-#include "sem.h"
+#include "../chan.h"
+#include "../thread.h"
+#include "../sem.h"
 
 Sem_T mutex;
 

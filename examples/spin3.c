@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "thread.h"
-#include "sem.h"
+#include "../sem.h"
 
 Sem_T mutex;
 int y;

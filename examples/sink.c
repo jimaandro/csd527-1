@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "thread.h"
-#include "chan.h"
+#include "../thread.h"
+#include "../chan.h"
 
 struct args { Chan_T c; int limit; };
 

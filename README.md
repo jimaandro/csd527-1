@@ -24,6 +24,6 @@ To run the project, type
 
 ## Problems
 
-There are some issues running `chan.c` file. Tests whch include this will get segmentation fault. All other test run successfully
+Test with sink do not work (seg fault). All other test run successfully
 
 

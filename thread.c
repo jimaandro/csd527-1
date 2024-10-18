@@ -113,6 +113,7 @@ void Thread_exit(int code) {
     
     // printf(" exit\n");
     if (current_thread) {
+        // if(previous_thread->stack)
         // printf("current_thread %d switch\n", current_thread->id);
         
         _swtch(&previous_thread->stack, &current_thread->stack);  // Switch to the next thread

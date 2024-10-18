@@ -73,7 +73,6 @@ int Thread_new(int func(void *), void *args, size_t nbytes, ...) {
     // Set up the stack pointer and initialize the thread context
     void **stack = (void **)((char *)new_thread->stack + STACK_SIZE);
     
-    // // Reserve space for the general-purpose registers that will be saved by _swtch
     
     *(--stack) = (void *)_thrstart; //16
     *(--stack) = 0;  // Space for %ebp (saved by _swtch)    12
@@ -108,12 +107,13 @@ void Thread_exit(int code) {
         previous_thread = current_thread;
             thread_state_pool[current_thread->id] = 0;
     // Switch to the next available thread
-    current_thread = dequeue(&ready_queue);
+    
     }
-
+    current_thread = dequeue(&ready_queue);
+    
     // printf(" exit\n");
     if (current_thread) {
-        // printf("current_thread switch\n");
+        // printf("current_thread %d switch\n", current_thread->id);
         
         _swtch(&previous_thread->stack, &current_thread->stack);  // Switch to the next thread
         

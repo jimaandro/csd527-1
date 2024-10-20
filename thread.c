@@ -7,9 +7,9 @@
 #define STACK_SIZE  4096
 
 
-static Thread_T *thread_pool[MAX_THREADS];  // Array to hold all created threads
+static Thread_T *thread_pool[MAX_THREADS];  // Array of created threads
 int thread_state_pool[MAX_THREADS];
-static Thread_T *previous_thread = NULL;     // Pointer to currently running thread previous_thread
+static Thread_T *previous_thread = NULL;     // Pointer to previous_thread
 static int num_threads = 0;
 
 
@@ -55,10 +55,9 @@ void Thread_init(void) {
     current_thread->next = NULL;
 
     thread_pool[current_thread->id] = current_thread;
-    thread_state_pool[current_thread->id] = 0; // this is the running thread (not free) 
+    thread_state_pool[current_thread->id] = 1; // this is the running thread (not free) 
 }
 
-// Create a new thread and add it to the ready queue
 int Thread_new(int func(void *), void *args, size_t nbytes, ...) {
     Thread_T *new_thread = malloc(sizeof(Thread_T));
     assert(new_thread);
@@ -70,7 +69,6 @@ int Thread_new(int func(void *), void *args, size_t nbytes, ...) {
 
     assert(new_thread->stack);
 
-    // Set up the stack pointer and initialize the thread context
     void **stack = (void **)((char *)new_thread->stack + STACK_SIZE);
     
     
@@ -90,7 +88,6 @@ int Thread_new(int func(void *), void *args, size_t nbytes, ...) {
     return new_thread->id;
 }
 
-// Exit the current thread
 void Thread_exit(int code) {
     current_thread->return_value = code;
 
@@ -98,7 +95,7 @@ void Thread_exit(int code) {
 
 
     if (previous_thread) {
-        // free(previous_thread->stack);  // Free allocated stack space
+        // free(previous_thread->stack); 
         // printf("current_thread free\n");
         free(previous_thread);
     }
@@ -106,14 +103,13 @@ void Thread_exit(int code) {
     {
         previous_thread = current_thread;
             thread_state_pool[current_thread->id] = 0;
-    // Switch to the next available thread
     
     }
     current_thread = dequeue(&ready_queue);
     
     // printf(" exit\n");
     if (current_thread) {
-        // if(previous_thread->stack)
+        // if(previous_thread)
         // printf("current_thread %d switch\n", current_thread->id);
         
         _swtch(&previous_thread->stack, &current_thread->stack);  // Switch to the next thread
@@ -125,12 +121,12 @@ void Thread_exit(int code) {
     }
 }
 
-// Return the ID of the currently running thread
+// Return the ID 
 int Thread_self(void) {
     return current_thread ? current_thread->id : -1;
 }
 
-// Wait for the specified thread to finish
+// Wait for  thread to finish
 int Thread_join(int tid) {
     //  printf("Thread %d exiting critical section.\n", tid);
     Thread_T *target = thread_pool[tid];
@@ -151,7 +147,6 @@ bool state = (target->id<MAX_THREADS+1 && target->id >=0 ) ? thread_state_pool[t
     return target->return_value;
 }
 
-// Voluntarily yield the CPU to another thread
 void Thread_pause(void) {
     Thread_T *old_thread = current_thread;
     // print_thread_queue(&ready_queue);
@@ -174,7 +169,6 @@ void Thread_pause(void) {
     }
 }
 
-// Enqueue a thread in the queue
 void enqueue(Thread_T **queue, Thread_T *t) {
     t->next = NULL;
     if (*queue == NULL) {
@@ -188,7 +182,6 @@ void enqueue(Thread_T **queue, Thread_T *t) {
     }
 }
 
-// Dequeue a thread from the queue
 Thread_T *dequeue(Thread_T **queue) {
     if (*queue == NULL) {
         return NULL;
@@ -198,8 +191,3 @@ Thread_T *dequeue(Thread_T **queue) {
         return t;
     }
 }
-
-// // A function to be used as a stub for new threads
-// static void thread_stub(void) {
-//     Thread_exit(current_thread->func(current_thread->args));
-// }
